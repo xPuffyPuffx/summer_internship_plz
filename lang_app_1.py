@@ -92,11 +92,11 @@ def b1conf():
 def b2conf():
   z2.set(vBase[1][1])
 def b3conf():
-  z3.set(vBase[2][2])
+  z3.set(vBase[2][1])
 def b4conf():
-  z4.set(vBase[3][2])
+  z4.set(vBase[3][1])
 def b5conf():
-  z5.set(vBase[4][2])
+  z5.set(vBase[4][1])
 
 z1 = StringVar()
 z1.set("")
