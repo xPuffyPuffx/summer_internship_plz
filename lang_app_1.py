@@ -64,8 +64,8 @@ topFrame = Frame(root)
 
 #here I will put in an image
 my_img = ImageTk.PhotoImage(Image.open(r"C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\pics\images (1).jfif"))
-my_label = Label(image = my_img)
-my_label.grid(column = 4, rowspan = 5)
+my_label = Label()#image = my_img)
+my_label.grid(row=1, column = 3, rowspan = 4)
 
 #below are all the words in english
 l1 = Label(root, text = vBase[0][2])
@@ -92,7 +92,6 @@ e4.grid(row=3, column = 1)
 e5 = Entry(root, width = widthh, fg = "red")
 e5.grid(row=4, column = 1)
 
-varText = "Helllo"
 def b1conf():
   z1.set(vBase[0][1])
 def b2conf():
@@ -103,6 +102,9 @@ def b4conf():
   z4.set(vBase[3][1])
 def b5conf():
   z5.set(vBase[4][1])
+def confiBconf():
+  if(e1.get() == vBase[0][0] and e2.get() == vBase[1][0] and e3.get() == vBase[2][0] and e4.get() == vBase[3][0] and e5.get() == vBase[4][0]):
+    my_label.config(image = my_img)#grid(row=1, column = 3, rowspan = 4)
 
 z1 = StringVar()
 z1.set("")
@@ -114,6 +116,8 @@ z4 = StringVar()
 z4.set("")
 z5 = StringVar()
 z5.set("")
+z6 = StringVar()
+z6.set("Confirm")
 
 b1 = Button(root, textvariable = z1, width = widthh, command = b1conf)
 b1.grid(row = 0, column = 2)
@@ -125,6 +129,8 @@ b4 = Button(root, textvariable = z4, width = widthh, command = b4conf)
 b4.grid(row = 3, column = 2)
 b5 = Button(root, textvariable = z5, width = widthh, command = b5conf)
 b5.grid(row = 4, column = 2)
+confiB = Button(root, textvariable = z6, width = widthh, command = confiBconf)
+confiB.grid(row = 0, column = 3)
 
 #---------------------------------------
 root.mainloop()
