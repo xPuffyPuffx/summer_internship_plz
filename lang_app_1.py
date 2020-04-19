@@ -1,4 +1,5 @@
 from tkinter import *
+from PIL import ImageTk,Image
 
 #next lines concern checking, whether a character is a chinese
 ranges = [
@@ -61,17 +62,22 @@ root = Tk()
 
 topFrame = Frame(root)
 
+#here I will put in an image
+my_img = ImageTk.PhotoImage(Image.open(r"C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\pics\images (1).jfif"))
+my_label = Label(image = my_img)
+my_label.grid(column = 4, rowspan = 5)
+
 #below are all the words in english
 l1 = Label(root, text = vBase[0][2])
-l1.grid(row=0)
+l1.grid(row=0, sticky='S')
 l2 = Label(root, text = vBase[1][2])
-l2.grid(row=1)
+l2.grid(row=1, sticky='S')
 l3 = Label(root, text = vBase[2][2])
-l3.grid(row=2)
+l3.grid(row=2, sticky='S')
 l4 = Label(root, text = vBase[3][2])
-l4.grid(row=3)
+l4.grid(row=3, sticky='S')
 l5 = Label(root, text = vBase[4][2])
-l5.grid(row=4)
+l5.grid(row=4, sticky='S')
 
 #below are all the entries
 widthh = 15
