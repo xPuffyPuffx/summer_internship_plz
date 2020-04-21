@@ -1,5 +1,6 @@
 from tkinter import *
 from PIL import ImageTk,Image
+import random
 
 #next lines concern checking, whether a character is a chinese
 ranges = [
@@ -51,11 +52,13 @@ def wholeLine(line):
 path1 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\HSK All Levels Vocabulary\HSK1.txt'
 vBase = []
 with open(path1, 'r', encoding='utf-8') as vocBase:
-    for i in range(5):
-        read_data = vocBase.readline()
+    vocLines = vocBase.readlines()
+    for i in vocLines:
+        read_data = i
         x, y, z = wholeLine(read_data)
         vBase.append([x, y, z])
-        print("KANJI: " + x + " " + "PHON: " + y + " " + "MEANING: " + z + "\n")
+        #print("KANJI: " + x + " " + "PHON: " + y + " " + "MEANING: " + z + "\n")
+    random.shuffle(vBase)
 
 root = Tk()
 #---------------------------------------
