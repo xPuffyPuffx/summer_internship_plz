@@ -1,6 +1,26 @@
 from tkinter import *
 from PIL import ImageTk,Image
 import random
+import time
+
+class wordling():
+  def __init__(self, x, y, z, score, date, totalTime):
+    self.x = x
+    self.y = y
+    self.z = z
+    self.score = score
+    self.date = date
+    self.totalTime = totalTime
+  def __reScore__(self, guessed, timeStamp):
+    if(guessed == 0):
+      score = score + 1
+    else:
+      score = score - 1
+    if(score == 0): score = 1
+    pass #here I need to acutalize date and totalTime
+  def actualize(): #here we will occasionally change category to 1 from 0, or to 7 from 8
+    pass
+
 
 #next lines concern checking, whether a character is a chinese
 ranges = [
@@ -50,6 +70,7 @@ def wholeLine(line):
     return kanji, phon, word
 
 path1 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\HSK All Levels Vocabulary\HSK1.txt'
+path2 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\vocPriv\Prof1.txt'
 vBase = []
 with open(path1, 'r', encoding='utf-8') as vocBase:
     vocLines = vocBase.readlines()
@@ -60,80 +81,100 @@ with open(path1, 'r', encoding='utf-8') as vocBase:
         #print("KANJI: " + x + " " + "PHON: " + y + " " + "MEANING: " + z + "\n")
     random.shuffle(vBase)
 
-root = Tk()
-#---------------------------------------
+for i in range(1):
+  root = Tk()
+  #---------------------------------------
 
-topFrame = Frame(root)
+  topFrame = Frame(root)
 
-#here I will put in an image
-my_img = ImageTk.PhotoImage(Image.open(r"C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\pics\images (1).jfif"))
-my_label = Label()#image = my_img)
-my_label.grid(row=1, column = 3, rowspan = 4)
+  #here I will put in an image
+  my_img = ImageTk.PhotoImage(Image.open(r"C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\pics\images (1).jfif"))
+  my_label = Label()#image = my_img)
+  my_label.grid(row=1, column = 3, rowspan = 4)
 
-#below are all the words in english
-l1 = Label(root, text = vBase[0][2])
-l1.grid(row=0, sticky='S')
-l2 = Label(root, text = vBase[1][2])
-l2.grid(row=1, sticky='S')
-l3 = Label(root, text = vBase[2][2])
-l3.grid(row=2, sticky='S')
-l4 = Label(root, text = vBase[3][2])
-l4.grid(row=3, sticky='S')
-l5 = Label(root, text = vBase[4][2])
-l5.grid(row=4, sticky='S')
+  #variable recording instances of pressing buttons with help
+  usedHelp = [0,0,0,0,0]
 
-#below are all the entries
-widthh = 15
-e1 = Entry(root, width = widthh, fg = "red")
-e1.grid(row=0, column = 1)
-e2 = Entry(root, width = widthh, fg = "red")
-e2.grid(row=1, column = 1)
-e3 = Entry(root, width = widthh, fg = "red")
-e3.grid(row=2, column = 1)
-e4 = Entry(root, width = widthh, fg = "red")
-e4.grid(row=3, column = 1)
-e5 = Entry(root, width = widthh, fg = "red")
-e5.grid(row=4, column = 1)
+  #below are all the words in english
+  l1 = Label(root, text = vBase[0][2])
+  l1.grid(row=0, sticky='S')
+  l2 = Label(root, text = vBase[1][2])
+  l2.grid(row=1, sticky='S')
+  l3 = Label(root, text = vBase[2][2])
+  l3.grid(row=2, sticky='S')
+  l4 = Label(root, text = vBase[3][2])
+  l4.grid(row=3, sticky='S')
+  l5 = Label(root, text = vBase[4][2])
+  l5.grid(row=4, sticky='S')
 
-def b1conf():
-  z1.set(vBase[0][1])
-def b2conf():
-  z2.set(vBase[1][1])
-def b3conf():
-  z3.set(vBase[2][1])
-def b4conf():
-  z4.set(vBase[3][1])
-def b5conf():
-  z5.set(vBase[4][1])
-def confiBconf():
-  if(e1.get() == vBase[0][0] and e2.get() == vBase[1][0] and e3.get() == vBase[2][0] and e4.get() == vBase[3][0] and e5.get() == vBase[4][0]):
-    my_label.config(image = my_img)#grid(row=1, column = 3, rowspan = 4)
+  #below are all the entries
+  widthh = 15
+  e1 = Entry(root, width = widthh, fg = "red")
+  e1.grid(row=0, column = 1)
+  e2 = Entry(root, width = widthh, fg = "red")
+  e2.grid(row=1, column = 1)
+  e3 = Entry(root, width = widthh, fg = "red")
+  e3.grid(row=2, column = 1)
+  e4 = Entry(root, width = widthh, fg = "red")
+  e4.grid(row=3, column = 1)
+  e5 = Entry(root, width = widthh, fg = "red")
+  e5.grid(row=4, column = 1)
 
-z1 = StringVar()
-z1.set("")
-z2 = StringVar()
-z2.set("")
-z3 = StringVar()
-z3.set("")
-z4 = StringVar()
-z4.set("")
-z5 = StringVar()
-z5.set("")
-z6 = StringVar()
-z6.set("Confirm")
+  def b1conf():
+    z1.set(vBase[0][1])
+    usedHelp[0] = 1
+  def b2conf():
+    z2.set(vBase[1][1])
+    usedHelp[1] = 1
+  def b3conf():
+    z3.set(vBase[2][1])
+    usedHelp[2] = 1
+  def b4conf():
+    z4.set(vBase[3][1])
+    usedHelp[3] = 1
+  def b5conf():
+    z5.set(vBase[4][1])
+    usedHelp[4] = 1
+  def confiBconf():
+    if(e1.get() == vBase[0][0] and e2.get() == vBase[1][0] and e3.get() == vBase[2][0] and e4.get() == vBase[3][0] and e5.get() == vBase[4][0]):
+      my_label.config(image = my_img)#grid(row=1, column = 3, rowspan = 4)
 
-b1 = Button(root, textvariable = z1, width = widthh, command = b1conf)
-b1.grid(row = 0, column = 2)
-b2 = Button(root, textvariable = z2, width = widthh, command = b2conf)
-b2.grid(row = 1, column = 2)
-b3 = Button(root, textvariable = z3, width = widthh, command = b3conf)
-b3.grid(row = 2, column = 2)
-b4 = Button(root, textvariable = z4, width = widthh, command = b4conf)
-b4.grid(row = 3, column = 2)
-b5 = Button(root, textvariable = z5, width = widthh, command = b5conf)
-b5.grid(row = 4, column = 2)
-confiB = Button(root, textvariable = z6, width = widthh, command = confiBconf)
-confiB.grid(row = 0, column = 3)
+  z1 = StringVar()
+  z1.set("")
+  z2 = StringVar()
+  z2.set("")
+  z3 = StringVar()
+  z3.set("")
+  z4 = StringVar()
+  z4.set("")
+  z5 = StringVar()
+  z5.set("")
+  z6 = StringVar()
+  z6.set("Confirm")
 
-#---------------------------------------
-root.mainloop()
+  b1 = Button(root, textvariable = z1, width = widthh, command = b1conf)
+  b1.grid(row = 0, column = 2)
+  b2 = Button(root, textvariable = z2, width = widthh, command = b2conf)
+  b2.grid(row = 1, column = 2)
+  b3 = Button(root, textvariable = z3, width = widthh, command = b3conf)
+  b3.grid(row = 2, column = 2)
+  b4 = Button(root, textvariable = z4, width = widthh, command = b4conf)
+  b4.grid(row = 3, column = 2)
+  b5 = Button(root, textvariable = z5, width = widthh, command = b5conf)
+  b5.grid(row = 4, column = 2)
+  confiB = Button(root, textvariable = z6, width = widthh, command = confiBconf)
+  confiB.grid(row = 0, column = 3)
+  exitB = Button(root, text = "Exit", width = widthh, command = root.destroy)
+  exitB.grid(row = 5, column = 2)
+
+  
+  #fun zmieniajaca wartosci slowek
+  def changeScore(index, value):
+    pass
+    
+  #fun zapisujaca slowka
+  with open(path2, 'w', encoding='utf-8') as f:
+    for i in vBase:
+      f.write(" ".join(i))
+  #---------------------------------------
+  root.mainloop()
