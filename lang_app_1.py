@@ -3,16 +3,17 @@ from PIL import ImageTk,Image
 import random
 import time
 import datetime
+from operator import itemgetter
 
 class wordling():
-  def __init__(self, x, y, z, score, date, totalTime, batchIndex):
+  def __init__(self, x, y, z, score, date, totalTime, isUsed):
     self.x = x
     self.y = y
     self.z = z
-    self.score = 0
+    self.score = score
     self.date = None
     self.totalTime = 0
-    self.batchIndex = None
+    self.isUsed = False
   def __reScore__(self, guessed, timeStamp = datetime.datetime.now()):
     self.date = timeStamp
     if(self.date == None):
@@ -28,6 +29,36 @@ class wordling():
     if(self.score == 0): self.score = 1
   def __actualize__(self): #here we will occasionally change category to 1 from 0, or to 7 from 8
     pass
+  def __getitem__(self, key):
+    if(key == 0):
+      return self.x
+    elif(key == 1):
+      return self.y
+    elif(key == 2):
+      return self.z
+    elif(key == 3):
+      return self.score
+    elif(key == 4):
+      return self.date
+    elif(key == 5):
+      return self.totalTime
+    elif(key == 6):
+      return self.isUsed
+  def __setitem__(self, key, value):
+    if(key == 0):
+      self.x = value
+    elif(key == 1):
+      self.y = value
+    elif(key == 2):
+      self.z = value
+    elif(key == 3):
+      self.score = value
+    elif(key == 4):
+      self.date = value
+    elif(key == 5):
+      self.totalTime = value
+    elif(key == 6):
+      return self.isUsed
 
 #next lines concern checking, whether a character is a chinese
 ranges = [
@@ -86,16 +117,17 @@ with open(path1, 'r', encoding='utf-8') as vocBase:
     for i in vocLines:
         read_data = i
         x, y, z = wholeLine(read_data)
-        vBase.append([x, y, z])
+        #vBase.append([x,y,z])
+        vBase.append(wordling(x, y, z, 0, None, 0, 0))
         #print("KANJI: " + x + " " + "PHON: " + y + " " + "MEANING: " + z + "\n")
-    random.shuffle(vBase)
+    #random.shuffle(vBase)
 
 for i in range(1):
   root = Tk()
   #---------------------------------------
-
+  #here we sort vBase based on scores, ignoreing words that are already being used somewhere
+  sorted(vBase, key=itemgetter(6,3))
   topFrame = Frame(root)
-
   #here I will put in an image
   my_img = ImageTk.PhotoImage(Image.open(r"C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\pics\images (1).jfif"))
   my_label = Label()#image = my_img)
@@ -184,6 +216,7 @@ for i in range(1):
   #fun zapisujaca slowka
   with open(path2, 'w', encoding='utf-8') as f:
     for i in vBase:
-      f.write(" ".join(i))
+      pass
+      #f.write(" ".join([]))
   #---------------------------------------
   root.mainloop()
