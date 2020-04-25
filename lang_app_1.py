@@ -2,25 +2,32 @@ from tkinter import *
 from PIL import ImageTk,Image
 import random
 import time
+import datetime
 
 class wordling():
-  def __init__(self, x, y, z, score, date, totalTime):
+  def __init__(self, x, y, z, score, date, totalTime, batchIndex):
     self.x = x
     self.y = y
     self.z = z
-    self.score = score
-    self.date = date
-    self.totalTime = totalTime
-  def __reScore__(self, guessed, timeStamp):
-    if(guessed == 0):
-      score = score + 1
+    self.score = 0
+    self.date = None
+    self.totalTime = 0
+    self.batchIndex = None
+  def __reScore__(self, guessed, timeStamp = datetime.datetime.now()):
+    self.date = timeStamp
+    if(self.date == None):
+      self.date = timeStamp
     else:
-      score = score - 1
-    if(score == 0): score = 1
-    pass #here I need to acutalize date and totalTime
-  def actualize(): #here we will occasionally change category to 1 from 0, or to 7 from 8
+      self.totalTime += self.totalTime + timeStamp - self.date
+      self.date = timeStamp
+    #self.totalTime = ...
+    if(guessed == 0):
+      self.score = self.score + 1
+    else:
+      self.score = self.score - 1
+    if(self.score == 0): self.score = 1
+  def __actualize__(self): #here we will occasionally change category to 1 from 0, or to 7 from 8
     pass
-
 
 #next lines concern checking, whether a character is a chinese
 ranges = [
@@ -72,6 +79,8 @@ def wholeLine(line):
 path1 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\HSK All Levels Vocabulary\HSK1.txt'
 path2 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\vocPriv\Prof1.txt'
 vBase = []
+#here I will need to change this function, so that words to check would be chosen
+#based on their score
 with open(path1, 'r', encoding='utf-8') as vocBase:
     vocLines = vocBase.readlines()
     for i in vocLines:
