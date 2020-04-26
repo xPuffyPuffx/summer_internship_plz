@@ -5,9 +5,11 @@ import time
 import datetime
 from operator import itemgetter
 
-
+#here i arbitrarily set minimum time intervals that have to pass beofre a word at a particular
+#level can be checked
+minuteIntervals = [1,4,16,64,256,2048,8192,32768]
 class wordling():
-  def __init__(self, x, y, z, score, date, totalTime, isUsed):
+  def __init__(self, x, y, z, score = 0, date = datetime.datetime.now(), totalTime = 0, isUsed = False):
     self.x = x
     self.y = y
     self.z = z
@@ -26,10 +28,10 @@ class wordling():
       self.date = timeStamp
     #self.totalTime = ...
     if(guessed == 0):
-      self.score = self.score + 1
+      self.score = int(self.score) + 1
     else:
       self.score = self.score - 1
-    if(self.score == 0):
+    if(self.score == 0 or self.score == -1):
       self.score = 1
       self.totalTime = 0
   def __actualize__(self): #here we will occasionally change category to 1 from 0, or to 7 from 8
@@ -104,27 +106,38 @@ def wholeLine(line):
     kanji = ""
     phon = ""
     word = ""
-    for sub in cjk_substrings(line):
-        kanji = sub
-        line = line.replace(sub, "")[:-1]
-    phoWord = line.split(" ", maxsplit=1)
+    #for sub in cjk_substrings(line):
+    #    kanji = sub
+    #    line = line.replace(sub, "")[:-1]
+    phoWord = line.split("!!!")
     phon = phoWord[0]
     word = phoWord[1]
-    return kanji, phon, word
+    return phoWord[0], phoWord[1], phoWord[2], phoWord[3], phoWord[4], phoWord[5]
 
 path1 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\HSK All Levels Vocabulary\HSK1.txt'
 path2 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\vocPriv\Prof1.txt'
+path3 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\vocPriv\Prof2.txt'
 vBase = []
 #here I will need to change this function, so that words to check would be chosen
 #based on their score
-with open(path1, 'r', encoding='utf-8') as vocBase:
+with open(path2, 'r', encoding='utf-8') as vocBase:
     vocLines = vocBase.readlines()
     for i in vocLines:
         read_data = i
-        x, y, z = wholeLine(read_data)
+        #x, y, z = wholeLine(read_data)
         #vBase.append([x,y,z])
-        vBase.append(wordling(x, y, z, 0, None, 0, False))
+        vBase.append(wordling(*wholeLine(read_data)))
     #random.shuffle(vBase)
+
+#function for saving changes in profile text file
+def onClosing():
+    with open(path3, 'w', encoding='utf-8') as f:
+      for i in toUse:
+        index = vBase.index(i)
+        vBase[index].__reScore__(usedHelp[toUse.index(i)])
+      for i in vBase:
+        f.write("!!!".join([str(i[0]), str(i[1]), str(i[2]), str(i[3]), str(i[4]), str(i[5])]) + "\n")
+    root.destroy()
 
 for i in range(1):
   root = Tk()
@@ -144,20 +157,22 @@ for i in range(1):
   toUse = []
   for i in vBase:
     if(len(toUse)>4): break
-    if(i[6]==False):
+    timeSinceCheck = datetime.datetime.now() - i.date
+    if(i[6]==False):# and timeSinceCheck.seconds/60 >= minuteIntervals[i[3]]):
       toUse.append(i)
-  print(len(toUse))
+  print(toUse[1][0])
+  #print(timeSinceCheck.seconds/60)
 
   #below are all the words in english
   l1 = Label(root, text = toUse[0][2])
   l1.grid(row=0, sticky='S')
-  l2 = Label(root, text = vBase[1][2])
+  l2 = Label(root, text = toUse[1][2])
   l2.grid(row=1, sticky='S')
-  l3 = Label(root, text = vBase[2][2])
+  l3 = Label(root, text = toUse[2][2])
   l3.grid(row=2, sticky='S')
-  l4 = Label(root, text = vBase[3][2])
+  l4 = Label(root, text = toUse[3][2])
   l4.grid(row=3, sticky='S')
-  l5 = Label(root, text = vBase[4][2])
+  l5 = Label(root, text = toUse[4][2])
   l5.grid(row=4, sticky='S')
 
   #below are all the entries
@@ -177,19 +192,19 @@ for i in range(1):
     z1.set(toUse[0][1])
     usedHelp[0] = 1
   def b2conf():
-    z2.set(vBase[1][1])
+    z2.set(toUse[1][1])
     usedHelp[1] = 1
   def b3conf():
-    z3.set(vBase[2][1])
+    z3.set(toUse[2][1])
     usedHelp[2] = 1
   def b4conf():
-    z4.set(vBase[3][1])
+    z4.set(toUse[3][1])
     usedHelp[3] = 1
   def b5conf():
-    z5.set(vBase[4][1])
+    z5.set(toUse[4][1])
     usedHelp[4] = 1
   def confiBconf():
-    if(e1.get() == vBase[0][0] and e2.get() == vBase[1][0] and e3.get() == vBase[2][0] and e4.get() == vBase[3][0] and e5.get() == vBase[4][0]):
+    if(e1.get() == toUse[0][0] and e2.get() == toUse[1][0] and e3.get() == toUse[2][0] and e4.get() == toUse[3][0] and e5.get() == toUse[4][0]):
       my_label.config(image = my_img)#grid(row=1, column = 3, rowspan = 4)
 
   z1 = StringVar()
@@ -217,20 +232,8 @@ for i in range(1):
   b5.grid(row = 4, column = 2)
   confiB = Button(root, textvariable = z6, width = widthh, command = confiBconf)
   confiB.grid(row = 0, column = 3)
-  exitB = Button(root, text = "Exit", width = widthh, command = root.destroy)
+  exitB = Button(root, text = "Exit", width = widthh, command = onClosing)
   exitB.grid(row = 5, column = 2)
-
-  
-  #fun zmieniajaca wartosci slowek
-  def changeScore(index, value):
-    pass
-    
-  #fun zapisujaca slowka
-  with open(path2, 'w', encoding='utf-8') as f:
-    for i in toUse:
-      index = vBase.index(i)
-      vBase[index].__reScore__(usedHelp[toUse.index(i)])
-    for i in vBase:
-      f.write(" ".join([str(i[0]), str(i[1]), str(i[2]), str(i[3]), str(i[4]), str(i[5])]) + "\n")
   #---------------------------------------
+  root.protocol("WM_DELETE_WINDOW", onClosing)
   root.mainloop()
