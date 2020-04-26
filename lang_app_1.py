@@ -5,28 +5,33 @@ import time
 import datetime
 from operator import itemgetter
 
+
 class wordling():
   def __init__(self, x, y, z, score, date, totalTime, isUsed):
     self.x = x
     self.y = y
     self.z = z
     self.score = score
-    self.date = None
+    self.date = datetime.datetime.now()
     self.totalTime = 0
     self.isUsed = False
   def __reScore__(self, guessed, timeStamp = datetime.datetime.now()):
     self.date = timeStamp
+    self.isUsed = False
     if(self.date == None):
       self.date = timeStamp
     else:
-      self.totalTime += self.totalTime + timeStamp - self.date
+      timediff = timeStamp - self.date
+      self.totalTime = self.totalTime + timediff.seconds
       self.date = timeStamp
     #self.totalTime = ...
     if(guessed == 0):
       self.score = self.score + 1
     else:
       self.score = self.score - 1
-    if(self.score == 0): self.score = 1
+    if(self.score == 0):
+      self.score = 1
+      self.totalTime = 0
   def __actualize__(self): #here we will occasionally change category to 1 from 0, or to 7 from 8
     pass
   def __getitem__(self, key):
@@ -101,7 +106,7 @@ def wholeLine(line):
     word = ""
     for sub in cjk_substrings(line):
         kanji = sub
-        line = line.replace(sub, "")
+        line = line.replace(sub, "")[:-1]
     phoWord = line.split(" ", maxsplit=1)
     phon = phoWord[0]
     word = phoWord[1]
@@ -118,8 +123,7 @@ with open(path1, 'r', encoding='utf-8') as vocBase:
         read_data = i
         x, y, z = wholeLine(read_data)
         #vBase.append([x,y,z])
-        vBase.append(wordling(x, y, z, 0, None, 0, 0))
-        #print("KANJI: " + x + " " + "PHON: " + y + " " + "MEANING: " + z + "\n")
+        vBase.append(wordling(x, y, z, 0, None, 0, False))
     #random.shuffle(vBase)
 
 for i in range(1):
@@ -136,8 +140,16 @@ for i in range(1):
   #variable recording instances of pressing buttons with help
   usedHelp = [0,0,0,0,0]
 
+  #variable storing wordlings to be used, we will need to it get their indices at the end
+  toUse = []
+  for i in vBase:
+    if(len(toUse)>4): break
+    if(i[6]==False):
+      toUse.append(i)
+  print(len(toUse))
+
   #below are all the words in english
-  l1 = Label(root, text = vBase[0][2])
+  l1 = Label(root, text = toUse[0][2])
   l1.grid(row=0, sticky='S')
   l2 = Label(root, text = vBase[1][2])
   l2.grid(row=1, sticky='S')
@@ -162,7 +174,7 @@ for i in range(1):
   e5.grid(row=4, column = 1)
 
   def b1conf():
-    z1.set(vBase[0][1])
+    z1.set(toUse[0][1])
     usedHelp[0] = 1
   def b2conf():
     z2.set(vBase[1][1])
@@ -215,8 +227,10 @@ for i in range(1):
     
   #fun zapisujaca slowka
   with open(path2, 'w', encoding='utf-8') as f:
+    for i in toUse:
+      index = vBase.index(i)
+      vBase[index].__reScore__(usedHelp[toUse.index(i)])
     for i in vBase:
-      pass
-      #f.write(" ".join([]))
+      f.write(" ".join([str(i[0]), str(i[1]), str(i[2]), str(i[3]), str(i[4]), str(i[5])]) + "\n")
   #---------------------------------------
   root.mainloop()
