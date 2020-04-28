@@ -9,17 +9,17 @@ from operator import itemgetter
 #level can be checked
 minuteIntervals = [1,4,16,64,256,2048,8192,32768]
 class wordling():
-  def __init__(self, x, y, z, score = 0, date = datetime.datetime.now(), totalTime = 0, isUsed = False):
+  def __init__(self, x, y, z, score = 0, date = datetime.datetime.now(), totalTime = 0, isUsed = 0):
     self.x = x
     self.y = y
     self.z = z
     self.score = score
     self.date = datetime.datetime.now()
-    self.totalTime = 0
-    self.isUsed = False
-  def __reScore__(self, guessed, timeStamp = datetime.datetime.now()):
+    self.totalTime = 0 #totalTime
+    self.isUsed = 0 #isUsed
+  def __reScore__(self, guessed, usedHelp, timeStamp = datetime.datetime.now()):
     self.date = timeStamp
-    self.isUsed = False
+    self.isUsed = 0
     if(self.date == None):
       self.date = timeStamp
     else:
@@ -27,13 +27,14 @@ class wordling():
       self.totalTime = self.totalTime + timediff.seconds
       self.date = timeStamp
     #self.totalTime = ...
-    if(guessed == 0):
+    if(guessed == 1 and usedHelp == 0):
       self.score = int(self.score) + 1
     else:
-      self.score = self.score - 1
+      self.score = int(self.score) - 1
     if(self.score == 0 or self.score == -1):
       self.score = 1
       self.totalTime = 0
+    print(self.score)
   def __actualize__(self): #here we will occasionally change category to 1 from 0, or to 7 from 8
     pass
   def __getitem__(self, key):
@@ -65,7 +66,7 @@ class wordling():
     elif(key == 5):
       self.totalTime = value
     elif(key == 6):
-      return self.isUsed
+      self.isUsed = value
 
 #next lines concern checking, whether a character is a chinese
 ranges = [
@@ -132,11 +133,15 @@ with open(path2, 'r', encoding='utf-8') as vocBase:
 #function for saving changes in profile text file
 def onClosing():
     with open(path3, 'w', encoding='utf-8') as f:
-      for i in toUse:
-        index = vBase.index(i)
-        vBase[index].__reScore__(usedHelp[toUse.index(i)])
+      for i in range(5):
+        index = vBase.index(toUse[i])
+        if(entries[i].get() == toUse[i][0]):
+          guessed = 1
+        else:
+          guessed = 0
+        vBase[index].__reScore__(guessed, usedHelp[i])
       for i in vBase:
-        f.write("!!!".join([str(i[0]), str(i[1]), str(i[2]), str(i[3]), str(i[4]), str(i[5])]) + "\n")
+        f.write("!!!".join([str(i[0]), str(i[1]), str(i[2]), str(i[3]), str(i[4]), str(i[5]), str(i[6])]) + "\n")
     root.destroy()
 
 for i in range(1):
@@ -158,7 +163,7 @@ for i in range(1):
   for i in vBase:
     if(len(toUse)>4): break
     timeSinceCheck = datetime.datetime.now() - i.date
-    if(i[6]==False):# and timeSinceCheck.seconds/60 >= minuteIntervals[i[3]]):
+    if(i[6]==0):# and timeSinceCheck.seconds/60 >= minuteIntervals[i[3]]):
       toUse.append(i)
   print(toUse[1][0])
   #print(timeSinceCheck.seconds/60)
@@ -187,6 +192,7 @@ for i in range(1):
   e4.grid(row=3, column = 1)
   e5 = Entry(root, width = widthh, fg = "red")
   e5.grid(row=4, column = 1)
+  entries = [e1,e2,e3,e4,e5]
 
   def b1conf():
     z1.set(toUse[0][1])
