@@ -4,6 +4,7 @@ import random
 import time
 import datetime
 from operator import itemgetter
+import os, random
 
 #here i arbitrarily set minimum time intervals that have to pass beofre a word at a particular
 #level can be checked
@@ -14,17 +15,17 @@ class wordling():
     self.y = y
     self.z = z
     self.score = score
-    self.date = datetime.datetime.now()
-    self.totalTime = 0 #totalTime
-    self.isUsed = 0 #isUsed
+    self.date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
+    self.totalTime = totalTime
+    self.isUsed = isUsed
   def __reScore__(self, guessed, usedHelp, timeStamp = datetime.datetime.now()):
-    self.date = timeStamp
+    #self.date = timeStamp - weź to wywal jak będziesz trzeźwy
     self.isUsed = 0
     if(self.date == None):
       self.date = timeStamp
     else:
       timediff = timeStamp - self.date
-      self.totalTime = self.totalTime + timediff.seconds
+      self.totalTime = int(self.totalTime) + timediff.seconds
       self.date = timeStamp
     #self.totalTime = ...
     if(guessed == 1 and usedHelp == 0):
@@ -34,7 +35,6 @@ class wordling():
     if(self.score == 0 or self.score == -1):
       self.score = 1
       self.totalTime = 0
-    print(self.score)
   def __actualize__(self): #here we will occasionally change category to 1 from 0, or to 7 from 8
     pass
   def __getitem__(self, key):
@@ -132,7 +132,7 @@ with open(path2, 'r', encoding='utf-8') as vocBase:
 
 #function for saving changes in profile text file
 def onClosing():
-    with open(path3, 'w', encoding='utf-8') as f:
+    with open(path2, 'w', encoding='utf-8') as f:
       for i in range(5):
         index = vBase.index(toUse[i])
         if(entries[i].get() == toUse[i][0]):
@@ -151,7 +151,9 @@ for i in range(1):
   sorted(vBase, key=itemgetter(6,3))
   topFrame = Frame(root)
   #here I will put in an image
-  my_img = ImageTk.PhotoImage(Image.open(r"C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\pics\images (1).jfif"))
+  rawDir = r"C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\pics\ "
+  picAddress = rawDir[:-1]  +  random.choice(os.listdir(r"C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\pics"))
+  my_img = ImageTk.PhotoImage(Image.open(picAddress))
   my_label = Label()#image = my_img)
   my_label.grid(row=1, column = 3, rowspan = 4)
 
@@ -163,10 +165,8 @@ for i in range(1):
   for i in vBase:
     if(len(toUse)>4): break
     timeSinceCheck = datetime.datetime.now() - i.date
-    if(i[6]==0):# and timeSinceCheck.seconds/60 >= minuteIntervals[i[3]]):
+    if(i[6]==0 and timeSinceCheck.seconds/60 >= minuteIntervals[int(i[3])]):
       toUse.append(i)
-  print(toUse[1][0])
-  #print(timeSinceCheck.seconds/60)
 
   #below are all the words in english
   l1 = Label(root, text = toUse[0][2])
