@@ -118,33 +118,38 @@ def wholeLine(line):
 path1 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\HSK All Levels Vocabulary\HSK1.txt'
 path2 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\vocPriv\Prof1.txt'
 path3 = r'C:\Users\KompPiotra\Desktop\Nauka - Jakub\projekt_cn\vocPriv\Prof2.txt'
-vBase = []
-#here I will need to change this function, so that words to check would be chosen
-#based on their score
-with open(path2, 'r', encoding='utf-8') as vocBase:
+
+#function for saving changes in profile text file
+def onClosing(vBase, entries, toUse, usedHelp, root):
+  vBase = vBase
+  entries = entries
+  toUse = toUse
+  usedHelp = usedHelp
+  root = root
+  with open(path2, 'w', encoding='utf-8') as f:
+    for i in range(5):
+      index = vBase.index(toUse[i])
+      if(entries[i].get() == toUse[i][0]):
+        guessed = 1
+      else:
+        guessed = 0
+      vBase[index].__reScore__(guessed, usedHelp[i])
+    for i in vBase:
+      f.write("!!!".join([str(i[0]), str(i[1]), str(i[2]), str(i[3]), str(i[4]), str(i[5]), str(i[6])]) + "\n")
+  root.destroy()
+
+
+def loopKtoK():
+  vBase = []
+  #here I will need to change this function, so that words to check would be chosen
+  #based on their score
+  with open(path2, 'r', encoding='utf-8') as vocBase:
     vocLines = vocBase.readlines()
     for i in vocLines:
         read_data = i
         #x, y, z = wholeLine(read_data)
         #vBase.append([x,y,z])
         vBase.append(wordling(*wholeLine(read_data)))
-    #random.shuffle(vBase)
-
-#function for saving changes in profile text file
-def onClosing():
-    with open(path2, 'w', encoding='utf-8') as f:
-      for i in range(5):
-        index = vBase.index(toUse[i])
-        if(entries[i].get() == toUse[i][0]):
-          guessed = 1
-        else:
-          guessed = 0
-        vBase[index].__reScore__(guessed, usedHelp[i])
-      for i in vBase:
-        f.write("!!!".join([str(i[0]), str(i[1]), str(i[2]), str(i[3]), str(i[4]), str(i[5]), str(i[6])]) + "\n")
-    root.destroy()
-
-for i in range(1):
   root = Tk()
   #---------------------------------------
   #here we sort vBase based on scores, ignoreing words that are already being used somewhere
@@ -238,8 +243,11 @@ for i in range(1):
   b5.grid(row = 4, column = 2)
   confiB = Button(root, textvariable = z6, width = widthh, command = confiBconf)
   confiB.grid(row = 0, column = 3)
-  exitB = Button(root, text = "Exit", width = widthh, command = onClosing)
+  exitB = Button(root, text = "Exit", width = widthh, command = lambda:onClosing(vBase, entries, toUse, usedHelp, root))
   exitB.grid(row = 5, column = 2)
   #---------------------------------------
   root.protocol("WM_DELETE_WINDOW", onClosing)
   root.mainloop()
+  time.sleep(3)
+for i in range(2):
+  loopKtoK()
